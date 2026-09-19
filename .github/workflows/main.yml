@@ -1,0 +1,54 @@
+name: Build Handheld S3 3.2in
+
+on:
+  push:
+    branches:
+      - develop      # Ganti ke 'master' atau 'main' jika Anda bekerja di branch tersebut
+    paths:
+      - 'variants/esp32s3/diy/handheld-s3/**'
+      - '.github/workflows/build-handheld-s3-32in.yml'
+  workflow_dispatch: # Agar bisa dijalankan manual lewat tombol klik
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install PlatformIO
+        run: pip install platformio
+
+      - name: Cache PlatformIO packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.platformio
+          key: pio-${{ runner.os }}-${{ hashFiles('**/platformio.ini') }}
+          restore-keys: |
+            pio-${{ runner.os }}-
+
+      - name: Link Variant Config to Root
+        run: |
+          echo "" >> platformio.ini
+          echo "extra_configs = variants/esp32s3/diy/handheld-s3/platformio.ini" >> platformio.ini
+
+      - name: Build handheld-s3-32in
+        run: pio run -e handheld-s3-32in
+
+      - name: Upload firmware artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: handheld-s3-32in-firmware
+          path: |
+            .pio/build/handheld-s3-32in/firmware*.bin
+            .pio/build/handheld-s3-32in/firmware*.elf
+            .pio/build/handheld-s3-32in/littlefs*.bin
+          retention-days: 30
