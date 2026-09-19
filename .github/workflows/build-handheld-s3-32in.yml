@@ -3,11 +3,11 @@ name: Build Handheld S3 3.2in
 on:
   push:
     branches:
-      - develop      # Ganti ke 'master' atau 'main' jika Anda bekerja di branch tersebut
+      - develop
     paths:
       - 'variants/esp32s3/diy/handheld-s3/**'
       - '.github/workflows/build-handheld-s3-32in.yml'
-  workflow_dispatch: # Agar bisa dijalankan manual lewat tombol klik
+  workflow_dispatch:
 
 jobs:
   build:
@@ -24,8 +24,11 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: Install PlatformIO
-        run: pip install platformio
+      - name: Install PlatformIO & Fix SCons
+        run: |
+          python -m pip install --upgrade pip
+          pip install "scons==4.7.0"
+          pip install platformio
 
       - name: Cache PlatformIO packages
         uses: actions/cache@v4
