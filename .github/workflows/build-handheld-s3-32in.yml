@@ -1,12 +1,13 @@
-name: Build Handheld S3 3.2in
+name: Build MeshNode S3 3.2In
 
 on:
   push:
     branches:
       - develop
     paths:
-      - 'variants/esp32s3/diy/handheld-s3/**'
-      - '.github/workflows/build-handheld-s3-32in.yml'
+      - 'variants/esp32s3/diy/meshnode_s3/**'
+      - 'boards/meshnode-s3.json'
+      - '.github/workflows/build-meshnode-s3-32in.yaml'
   workflow_dispatch:
 
 jobs:
@@ -24,7 +25,7 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: Install PlatformIO & Fix SCons
+      - name: Install PlatformIO
         run: pip install platformio
 
       - name: Cache PlatformIO packages
@@ -35,20 +36,15 @@ jobs:
           restore-keys: |
             pio-${{ runner.os }}-
 
-      - name: Link Variant Config to Root
-        run: |
-          echo "" >> platformio.ini
-          echo "extra_configs = variants/esp32s3/diy/handheld-s3/platformio.ini" >> platformio.ini
-
-      - name: Build handheld-s3-32in
-        run: pio run -e handheld-s3-32in
+      - name: Build meshnode-s3
+        run: pio run -e meshnode-s3-32in
 
       - name: Upload firmware artifact
         uses: actions/upload-artifact@v4
         with:
-          name: handheld-s3-32in-firmware
+          name: meshnode-s3-firmware
           path: |
-            .pio/build/handheld-s3-32in/firmware*.bin
-            .pio/build/handheld-s3-32in/firmware*.elf
-            .pio/build/handheld-s3-32in/littlefs*.bin
+            .pio/build/meshnode-s3-32in/firmware-meshnode-s3-32in*.bin
+            .pio/build/meshnode-s3-32in/firmware-meshnode-s3-32in*.elf
+            .pio/build/meshnode-s3-32in/littlefs-meshnode-s3-32in*.bin
           retention-days: 30
