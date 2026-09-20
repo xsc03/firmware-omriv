@@ -37,7 +37,7 @@ jobs:
             pio-${{ runner.os }}-
 
       - name: Build meshnode-s3
-        run: pio run -e meshnode-s3-32in
+        run: pio run -e handheld-s3-32in
 
       - name: Upload firmware artifact
         uses: actions/upload-artifact@v4
